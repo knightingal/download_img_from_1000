@@ -10,7 +10,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
         xmlhttp = new XMLHttpRequest()
         console.log(totalRequest);
         xmlhttp.open("POST", "http://127.0.0.1:8000/local1000/urls1000/", true)
-        //xmlhttp.open("POST", "http://127.0.0.1:8081/startDownload/", true)
+        // xmlhttp.open("POST", "http://127.0.0.1:8081/startDownload/", true)
         xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState==4) {

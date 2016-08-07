@@ -12,7 +12,7 @@
     },
     "content_scripts": [
         {
-            "matches":["http://www.1000mt.com/*"],
+            "matches":["http://www.1000rtrt.com/*"],
             "js":["json.js", "content_script.js"],
             "run_at":"document_end"
         }
