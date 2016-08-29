@@ -2,7 +2,7 @@
     "name": "Page Redder",
     "description": "Make the current page red",
     "version": "2.0",
-   
+
     "background": {
         "scripts": ["background.js", "json.js"],
         "persistent": false
@@ -23,5 +23,3 @@
     ]
 
 }
-
-

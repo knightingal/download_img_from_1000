@@ -2,14 +2,17 @@ function doTask() {
     Task.init();
     var pageInfo = Task.getPageInfo();
     chrome.extension.sendMessage(
-        pageInfo.toJSONString(), 
+        pageInfo.toJSONString(),
         function(response) {
-            if (Task.isLastPage()) {
+            if (response == "checkError") {
+                doTask();
+            }
+            else if (Task.isLastPage()) {
                 window.location.href = Task.getNextUrl();
-            } else {
+            }
+            else {
                 chrome.extension.sendMessage("stop", function(response) {});
             }
-            
         }
     );
 }
@@ -18,9 +21,14 @@ var Task = {
     "fontElementArray": [],
     "pElementArray": [],
     "init": function() {
+        this.fontElementArray = [];
+        this.pElementArray = [];
+
+
         this.fontElementArray = document.getElementsByTagName("font");
         console.log(this.fontElementArray);
         this.pElementArray = document.getElementsByTagName("p");
+        console.log(this.pElementArray);
     },
     "getCurrentTitle": function() {
         return this.getTitleShort(
@@ -43,7 +51,8 @@ var Task = {
         var imgSrcArray = [];
         var pageInfoObj = {};
         for (var i = 2; i < this.pElementArray.length; i++) {
-            imgSrcArray[i-2] = this.pElementArray[i].firstChild.src;
+            console.log("scan to " + this.pElementArray[i].firstChild.src);
+            imgSrcArray.push(this.pElementArray[i].firstChild.src);
         }
         pageInfoObj.imgSrcArray = imgSrcArray;
         pageInfoObj.title = this.getCurrentTitle();
