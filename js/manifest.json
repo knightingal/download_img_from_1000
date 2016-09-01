@@ -2,9 +2,7 @@
     "name": "Page Redder",
     "description": "Make the current page red",
     "version": "2.0",
-    "permissions": [
-        "activeTab"
-    ],
+
     "background": {
         "scripts": ["background.js", "json.js"],
         "persistent": false
@@ -14,16 +12,14 @@
     },
     "content_scripts": [
         {
-            "matches":["http://www.1000rt.com/*"],
+            "matches":["http://www.1000rtrt.com/*"],
             "js":["json.js", "content_script.js"],
             "run_at":"document_end"
         }
     ],
     "manifest_version": 2,
     "permissions": [
-        "http://*/"
+        "tabs", "http://*/"
     ]
 
 }
-
-

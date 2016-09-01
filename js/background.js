@@ -1,51 +1,73 @@
 var isAutoRun = false;
 
-var totalRequest = [];
-var index = 0;
+var totalRequest = {};
+
+function checkImgSrcArray(imgSrcArray) {
+    var imgNumArray = [];
+    var re = /\/(\d+)\.jpg$/;
+    for (var imgSrc of imgSrcArray) {
+        var imgNum = Number(imgSrc.match(re)[1]);
+        imgNumArray.push(imgNum);
+    }
+    console.log(imgNumArray);
+    for (var i = 0; i < imgNumArray.length - 1; i++) {
+        if (imgNumArray[i + 1] - imgNumArray[i] != 1) {
+            return false;
+        }
+    }
+    return true;
+
+}
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
-    //console.log(request);
-    if (request == false) {
+
+    if (request === "checkIsAutoRun") {
         sendResponse(isAutoRun);
     } else if (request === "stop" ){
-        console.log(totalRequest.toJSONString());
         isAutoRun = false;
         xmlhttp = new XMLHttpRequest()
-
-        xmlhttp.open("POST", "http://127.0.0.1:8081/", false)
+        console.log(totalRequest);
+        xmlhttp.open("POST", "http://127.0.0.1:8000/local1000/urls1000/", true)
+        // xmlhttp.open("POST", "http://127.0.0.1:8081/startDownload/", true)
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState==4) {
                 if (xmlhttp.status==200) {
-                    console.log("http://127.0.0.1:8081/ return " 
+                    console.log("http://127.0.0.1:8081/startDownload/ return "
                         + xmlhttp.responseText)
                 }
             }
         }
-        xmlhttp.send(totalRequest.toJSONString());
-        totalRequest = [];
-        index = 0;
+        xmlhttp.send(JSON.stringify(totalRequest));
+        totalRequest = {};
     } else {
-
+        var pageInfo = JSON.parse(request);
         isAutoRun = true;
-        totalRequest[index] = request;
-        index += 1;
+        var tmpImgSrcArray;
+        if (totalRequest["title"] === undefined) {
+            totalRequest["title"] = pageInfo["title"];
+            tmpImgSrcArray = pageInfo["imgSrcArray"];
+        } else if (totalRequest["title"] === pageInfo["title"]) {
+            tmpImgSrcArray = totalRequest["imgSrcArray"].concat(pageInfo["imgSrcArray"]);
+        }
+        var ret = checkImgSrcArray(tmpImgSrcArray);
+        console.log(ret);
+
+        if (ret === false) {
+            sendResponse("checkError");
+        } else {
+            totalRequest["imgSrcArray"] = tmpImgSrcArray;
+            sendResponse("checkSucc");
+        }
+
+
     }
-    sendResponse(0);
+
 });
 chrome.browserAction.onClicked.addListener(function(tab) {
-    console.log('Tuering ' + tab.url + ' red!');
-    
     chrome.tabs.executeScript(null, {
         code: "doTask()"
-    });
-    /*
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://127.0.0.1:8081/", true);
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-            var resp = xhr.responseText;
-            console.log('response', resp);
-        }
-    }
-    xhr.send();
-    */
+    }, function() {console.log("callback");}
+
+    );
+
 });

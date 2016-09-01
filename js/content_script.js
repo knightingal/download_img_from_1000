@@ -1,63 +1,93 @@
-//document.body.style.backgroundColor="green"; 
-//document.getElementById("lst-ib").value="test";
 function doTask() {
-//console.log(x[2])
-    console.log(window.location.href)
-    var jsonObj = {};
-    jsonObj.href = window.location.href
-    var t=document.getElementsByTagName("font");
-    //console.log(t);
-    //console.log(t[8].innerHTML);
-    var next_a = t[8].parentNode;
-    //console.log(next_a.href);
-    var title=t[4].innerHTML;
-    var titleString = new String(title);
-    //var titleShort = new String(titleString.slice(0, -4));
-    var titleShort = getTitleShort(titleString);
-
-    var next_title = getTitleShort(t[8].innerHTML);
-    jsonObj.title = titleShort;
-    var jsonArray = [];
-    var x=document.getElementsByTagName("p")
-    console.log(x)
-    for (i=2; i<x.length; i++) {
-        console.log(x[i].firstChild.src)
-        //jsonArray[i-2]=x[i].firstChild.src
-        jsonArray[i-2]=x[i].firstChild.src
-    }
-    jsonObj.list=jsonArray;
-    //console.log(x[4].innerHTML)
-    console.log(titleShort);
-    console.log(jsonObj)
-    console.log(jsonObj.toJSONString())
-
-    console.log(next_title.localeCompare(titleShort));
-    
-
-    chrome.extension
-        .sendMessage(jsonObj.toJSONString(), 
+    Task.init();
+    var pageInfo = Task.getPageInfo();
+    chrome.extension.sendMessage(
+        pageInfo.toJSONString(),
         function(response) {
-            if (next_title.localeCompare(titleShort) == 0) {
-                window.location.href = next_a;
+            if (response == "checkError") {
+                doTask();
+            }
+            else if (Task.isLastPage()) {
+                window.location.href = Task.getNextUrl();
             }
             else {
-                chrome.extension.sendMessage("stop",
-                    function(response) {
-                    }
-                );
+                chrome.extension.sendMessage("stop", function(response) {});
             }
         }
     );
-        
 }
 
+var Task = {
+    "fontElementArray": [],
+    "pElementArray": [],
+    "init": function() {
+        this.fontElementArray = [];
+        this.pElementArray = [];
 
-console.log("enter sendMessage");
-chrome.extension.sendMessage(false, function(response) {
-    if (response == true) {
-        doTask();
+
+        this.fontElementArray = document.getElementsByTagName("font");
+        console.log(this.fontElementArray);
+        this.pElementArray = document.getElementsByTagName("p");
+        console.log(this.pElementArray);
+    },
+    "getCurrentTitle": function() {
+        return this.getTitleShort(
+                new String(this.fontElementArray[4].innerHTML)
+        );
+    },
+    "getNextTitle": function() {
+        return this.getTitleShort(
+                new String(this.fontElementArray[this.fontElementArray.length - 16].innerHTML)
+        );
+    },
+    "getNextUrl": function() {
+        var nextUrl = this.fontElementArray[this.fontElementArray.length - 16].parentNode.href;
+        return nextUrl;
+    },
+    "getTitleShort": function(titleString) {
+        return new String(titleString.slice(0, -4));
+    },
+    "getPageInfo": function() {
+        var imgSrcArray = [];
+        var pageInfoObj = {};
+        for (var i = 2; i < this.pElementArray.length; i++) {
+            console.log("scan to " + this.pElementArray[i].firstChild.src);
+            imgSrcArray.push(this.pElementArray[i].firstChild.src);
+        }
+        pageInfoObj.imgSrcArray = imgSrcArray;
+        pageInfoObj.title = this.getCurrentTitle();
+        return pageInfoObj;
+    },
+    "isLastPage": function() {
+        var nextTitle = this.getNextTitle();
+        var currentTitle = this.getCurrentTitle();
+        return nextTitle.localeCompare(currentTitle) == 0;
     }
-});
+    // ,
+    // "doTask": function() {
+    //     var getInfo = this.getPageInfo();
+    //     console.log(getInfo);
+    //     self.port.emit("sendPageInfo", getInfo);
+    //     if (this.isLastPage() == 0) {
+    //         self.port.emit("goToNextPage", this.getNextUrl());
+    //     }
+    //     else {
+    //         self.port.emit("stopAndSendPageInfosToServer");
+    //     }
+    // }
+}
+
+console.log("enter content_script.js");
+function checkIsAutoRun(autoRunCallback) {
+    chrome.extension.sendMessage("checkIsAutoRun", function(response) {
+        var isAutoRun = response;
+        if (isAutoRun === true) {
+            autoRunCallback();
+        }
+    });
+}
+
+checkIsAutoRun(doTask);
 
 function getTitleShort(titleString) {
     return new String(titleString.slice(0, -4));
