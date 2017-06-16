@@ -12,7 +12,7 @@
     },
     "content_scripts": [
         {
-            "matches":["http://www.1000rtrt.com/*"],
+            "matches":["http://www.renti1000.com/*"],
             "js":["json.js", "content_script.js"],
             "run_at":"document_end"
         }

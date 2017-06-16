@@ -26,22 +26,23 @@ var Task = {
 
 
         this.fontElementArray = document.getElementsByTagName("font");
+        this.nextTitle = document.getElementsByClassName("fenxianga")[0]
+            .getElementsByTagName("a")[0];
         console.log(this.fontElementArray);
-        this.pElementArray = document.getElementsByTagName("p");
-        console.log(this.pElementArray);
+        var bigImgDiv = document.getElementsByClassName('big_img')[0];
+        this.imgElementArray = bigImgDiv.getElementsByTagName("img");
+        console.log(this.imgElementArray);
     },
     "getCurrentTitle": function() {
         return this.getTitleShort(
-                new String(this.fontElementArray[4].innerHTML)
+                new String(document.title)
         );
     },
     "getNextTitle": function() {
-        return this.getTitleShort(
-                new String(this.fontElementArray[this.fontElementArray.length - 16].innerHTML)
-        );
+        return this.getTitleShort(new String(this.nextTitle.innerHTML));
     },
     "getNextUrl": function() {
-        var nextUrl = this.fontElementArray[this.fontElementArray.length - 16].parentNode.href;
+        var nextUrl = this.nextTitle.href;
         return nextUrl;
     },
     "getTitleShort": function(titleString) {
@@ -50,9 +51,9 @@ var Task = {
     "getPageInfo": function() {
         var imgSrcArray = [];
         var pageInfoObj = {};
-        for (var i = 2; i < this.pElementArray.length; i++) {
-            console.log("scan to " + this.pElementArray[i].firstChild.src);
-            imgSrcArray.push(this.pElementArray[i].firstChild.src);
+        for (var i = 0; i < this.imgElementArray.length; i++) {
+            console.log("scan to " + this.imgElementArray[i].src);
+            imgSrcArray.push({src:this.imgElementArray[i].src, ref:document.URL});
         }
         pageInfoObj.imgSrcArray = imgSrcArray;
         pageInfoObj.title = this.getCurrentTitle();
