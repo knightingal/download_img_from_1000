@@ -1,6 +1,12 @@
 {
-    "name": "Page Redder",
-    "description": "Make the current page red",
+    "applications": {
+        "gecko": {
+            "id": "yujianming1985@hotmail.com",
+            "strict_min_version": "42.0"
+        }
+    },
+    "name": "flow1000Extention",
+    "description": "extention for flow1000",
     "version": "2.0",
 
     "background": {
@@ -8,7 +14,7 @@
         "persistent": false
     },
     "browser_action": {
-        "default_title": "Make this page red"
+        "default_title": "extention for flow1000"
     },
     "content_scripts": [
         {

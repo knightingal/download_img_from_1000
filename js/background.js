@@ -18,7 +18,7 @@ function checkImgSrcArray(imgSrcArray) {
     return true;
 
 }
-chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     if (request === "checkIsAutoRun") {
         sendResponse(isAutoRun);
@@ -63,8 +63,8 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     }
 
 });
-chrome.browserAction.onClicked.addListener(function(tab) {
-    chrome.tabs.executeScript(null, {
+browser.browserAction.onClicked.addListener(function(tab) {
+    browser.tabs.executeScript(null, {
         code: "doTask()"
     }, function() {console.log("callback");}
 
