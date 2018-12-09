@@ -16,6 +16,9 @@
     "browser_action": {
         "default_title": "extention for flow1000"
     },
+    "icons": {
+        "48": "default48.png"
+    },
     "content_scripts": [
         {
             "matches":["http://www.renti1000.com/*"],
