@@ -49,7 +49,8 @@ var Task = {
         return nextUrl;
     },
     "getTitleShort": function(titleString) {
-        return new String(titleString.slice(0, -4));
+        const re = /(([a-zA-Z]|[\u4e00-\u9fa5])*)((\[\d\])?)/;
+        return titleString.match(re)[1];
     },
     "getPageInfo": function() {
         var imgSrcArray = [];
@@ -67,18 +68,6 @@ var Task = {
         var currentTitle = this.getCurrentTitle();
         return nextTitle.localeCompare(currentTitle) == 0;
     }
-    // ,
-    // "doTask": function() {
-    //     var getInfo = this.getPageInfo();
-    //     console.log(getInfo);
-    //     self.port.emit("sendPageInfo", getInfo);
-    //     if (this.isLastPage() == 0) {
-    //         self.port.emit("goToNextPage", this.getNextUrl());
-    //     }
-    //     else {
-    //         self.port.emit("stopAndSendPageInfosToServer");
-    //     }
-    // }
 }
 
 console.log("enter content_script.js");
@@ -96,5 +85,6 @@ function checkIsAutoRun(autoRunCallback) {
 checkIsAutoRun(doTask);
 
 function getTitleShort(titleString) {
-    return new String(titleString.slice(0, -4));
+    const re = /(([a-zA-Z]|[\u4e00-\u9fa5])*)((\[\d\])?)/;
+    return titleString.match(re)[1];
 }
