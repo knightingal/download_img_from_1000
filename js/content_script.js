@@ -1,7 +1,7 @@
 function doTask() {
     Task.init();
     var pageInfo = Task.getPageInfo();
-    chrome.extension.sendMessage(
+    browser.runtime.sendMessage(
         pageInfo.toJSONString(),
         function(response) {
             if (response == "checkError") {
@@ -11,7 +11,7 @@ function doTask() {
                 window.location.href = Task.getNextUrl();
             }
             else {
-                chrome.extension.sendMessage("stop", function(response) {});
+                browser.runtime.sendMessage("stop", function(response) {});
             }
         }
     );
@@ -80,7 +80,7 @@ var Task = {
 
 console.log("enter content_script.js");
 function checkIsAutoRun(autoRunCallback) {
-    chrome.extension.sendMessage("checkIsAutoRun", function(response) {
+    browser.runtime.sendMessage("checkIsAutoRun", function(response) {
         var isAutoRun = response;
         if (isAutoRun === true) {
             autoRunCallback();
